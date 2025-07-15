@@ -2,32 +2,46 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_3'
+        maven 'Maven 3.9.10'  // Make sure you have this tool configured in Jenkins
+    }
+
+    environment {
+        DOCKER_IMAGE_NAME = 'room-service'
+        CONTAINER_NAME = 'room-service'
+        PORT = '8082'
     }
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/aadity18/room-service.git'
+            }
+        }
+
         stage('Build with Maven') {
             steps {
-                bat 'mvn clean package'
+                bat '"C:\\Program Files\\Apache\\maven-3.9.10\\bin\\mvn.cmd" clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t room-service .'
+                bat "docker build -t ${DOCKER_IMAGE_NAME} ."
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                bat 'docker stop room-service || echo No container to stop'
-                bat 'docker rm room-service || echo No container to remove'
+                bat """
+                    docker stop ${CONTAINER_NAME} || exit 0
+                    docker rm ${CONTAINER_NAME} || exit 0
+                """
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker run -d -p 8081:8081 --name room-service room-service'
+                bat "docker run -d -p ${PORT}:${PORT} --name ${CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             }
         }
     }
