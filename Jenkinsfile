@@ -1,10 +1,14 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven_3'
+    }
+
     stages {
         stage('Build with Maven') {
             steps {
-                bat '"C:\\Program Files\\Apache\\maven-3.9.10\\bin\\mvn.cmd" clean package'
+                bat 'mvn clean package'
             }
         }
 
@@ -16,8 +20,8 @@ pipeline {
 
         stage('Stop Old Container') {
             steps {
-                bat 'docker stop room-service || echo "Container not running"'
-                bat 'docker rm room-service || echo "Container not existing"'
+                bat 'docker stop room-service || echo No container to stop'
+                bat 'docker rm room-service || echo No container to remove'
             }
         }
 
@@ -30,10 +34,10 @@ pipeline {
 
     post {
         failure {
-            echo '❌ Deployment failed'
+            echo "❌ Deployment failed"
         }
         success {
-            echo '✅ Deployment successful'
+            echo "✅ Deployment successful"
         }
     }
 }
