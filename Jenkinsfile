@@ -1,53 +1,39 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "room-service"
-        CONTAINER_NAME = "room-service-container"
-        PORT = "8081"
-    }
-
     stages {
-        stage('Clone Code') {
-            steps {
-                git 'https://github.com/aadity18/room-service.git'
-            }
-        }
-
         stage('Build with Maven') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat 'mvn clean package'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME} ."
+                bat 'docker build -t room-service .'
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                sh """
-                    docker stop ${CONTAINER_NAME} || true
-                    docker rm ${CONTAINER_NAME} || true
-                """
+                bat 'docker stop room-service || exit 0'
+                bat 'docker rm room-service || exit 0'
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                sh "docker run -d -p ${PORT}:${PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+                bat 'docker run -d -p 8081:8081 --name room-service room-service'
             }
         }
     }
 
     post {
-        success {
-            echo "🎉 Room Service deployed successfully on port ${PORT}"
-        }
         failure {
             echo "❌ Deployment failed"
+        }
+        success {
+            echo "✅ Deployment successful"
         }
     }
 }
