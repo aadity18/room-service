@@ -1,6 +1,7 @@
 package com.hms.rooms.service;
 
 import com.hms.rooms.entity.Room;
+import com.hms.rooms.exception.RoomNotFoundException;
 import com.hms.rooms.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class RoomService {
     public Room addRoom(Room room) {
         Optional<Room> existingRoom = roomRepository.findByCode(room.getCode());
         if (existingRoom.isPresent()) {
-            throw new RuntimeException("Room with ID " + room.getCode() + " already exists");
+            throw new RoomNotFoundException("Room with ID " + room.getCode() + " already exists");
         }
         return roomRepository.save(room);
     }
@@ -34,7 +35,7 @@ public class RoomService {
         if (room.isPresent()) {
             return room.get();
         }
-        throw new RuntimeException("Room with ID " + id + " not found");
+        throw new RoomNotFoundException("Room with ID " + id + " not found");
     }
 
     public Room updateRoom(Long id, Room room) {
@@ -43,7 +44,7 @@ public class RoomService {
             room.setId(id);
             return roomRepository.save(room);
         }
-        throw new RuntimeException("Room with ID " + id + " not found");
+        throw new RoomNotFoundException("Room with ID " + id + " not found");
     }
 
     public void deleteRoom(Long id) {
@@ -51,7 +52,7 @@ public class RoomService {
         if (room.isPresent()) {
             roomRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Room with ID " + id + " not found");
+            throw new RoomNotFoundException("Room with ID " + id + " not found");
         }
     }
 
@@ -72,6 +73,6 @@ public class RoomService {
             r.setRate(rate);
             return roomRepository.save(r);
         }
-        throw new RuntimeException("Room with ID " + id + " not found");
+        throw new RoomNotFoundException("Room with ID " + id + " not found");
     }
 }

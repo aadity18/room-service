@@ -45,7 +45,7 @@ class RoomControllerTest {
         ResponseEntity<List<Room>> response = roomController.getAllRooms();
 
         // Assert: Verify 200 OK and response body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals(1, response.getBody().size(), "Expected one room in response");
         assertEquals(1L, response.getBody().get(0).getId(), "Expected correct room ID");
@@ -63,7 +63,7 @@ class RoomControllerTest {
         ResponseEntity<Room> response = roomController.getRoomById(1L);
 
         // Assert: Verify 200 OK and response body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals(1L, response.getBody().getId(), "Expected correct room ID");
         assertEquals(99.99, response.getBody().getRate(), "Expected correct room rate");
@@ -84,7 +84,7 @@ class RoomControllerTest {
         // Verify: Exception handler returns 404
         ResponseEntity<String> response = roomController.handleRuntimeException(
                 new RuntimeException("Room with ID 1 not found"));
-        assertEquals(404, response.getStatusCodeValue(), "Expected 404 status from exception handler");
+        assertEquals(404, response.getStatusCode().value(), "Expected 404 status from exception handler");
         assertEquals("Room with ID 1 not found", response.getBody(), "Expected correct error message");
         verify(roomService, times(1)).getRoomById(1L);
     }
@@ -98,7 +98,7 @@ class RoomControllerTest {
         ResponseEntity<Room> response = roomController.addRoom(room);
 
         // Assert: Verify 200 OK and response body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals(1L, response.getBody().getId(), "Expected correct room ID");
         assertEquals(99.99, response.getBody().getRate(), "Expected correct room rate");
@@ -120,7 +120,7 @@ class RoomControllerTest {
         // Verify: Exception handler returns 404
         ResponseEntity<String> response = roomController.handleRuntimeException(
                 new RuntimeException("Room with ID 1 already exists"));
-        assertEquals(404, response.getStatusCodeValue(), "Expected 404 status from exception handler");
+        assertEquals(404, response.getStatusCode().value(), "Expected 404 status from exception handler");
         assertEquals("Room with ID 1 already exists", response.getBody(), "Expected correct error message");
         verify(roomService, times(1)).addRoom(any(Room.class));
     }
@@ -128,24 +128,24 @@ class RoomControllerTest {
     @Test
     void updateRoom_ReturnsUpdatedRoom_WhenSuccessful() {
         // Arrange: Mock service to return updated room
-        when(roomService.updateRoom(eq(1L), any(Room.class))).thenReturn(room);
+        when(roomService.updateRoom(1L, any(Room.class))).thenReturn(room);
 
         // Act: Call controller method
         ResponseEntity<Room> response = roomController.updateRoom(1L, room);
 
         // Assert: Verify 200 OK and response body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals(1L, response.getBody().getId(), "Expected correct room ID");
         assertEquals(99.99, response.getBody().getRate(), "Expected correct room rate");
         assertEquals("Available", response.getBody().getStatus(), "Expected correct room status");
-        verify(roomService, times(1)).updateRoom(eq(1L), any(Room.class));
+        verify(roomService, times(1)).updateRoom(1L, any(Room.class));
     }
 
     @Test
     void updateRoom_Returns404_WhenNotFound() {
         // Arrange: Mock service to throw exception
-        when(roomService.updateRoom(eq(1L), any(Room.class)))
+        when(roomService.updateRoom(1L, any(Room.class)))
                 .thenThrow(new RuntimeException("Room with ID 1 not found"));
 
         // Act & Assert: Verify exception is thrown and handled
@@ -157,9 +157,9 @@ class RoomControllerTest {
         // Verify: Exception handler returns 404
         ResponseEntity<String> response = roomController.handleRuntimeException(
                 new RuntimeException("Room with ID 1 not found"));
-        assertEquals(404, response.getStatusCodeValue(), "Expected 404 status from exception handler");
+        assertEquals(404, response.getStatusCode().value(), "Expected 404 status from exception handler");
         assertEquals("Room with ID 1 not found", response.getBody(), "Expected correct error message");
-        verify(roomService, times(1)).updateRoom(eq(1L), any(Room.class));
+        verify(roomService, times(1)).updateRoom(1L, any(Room.class));
     }
 
     @Test
@@ -171,7 +171,7 @@ class RoomControllerTest {
         ResponseEntity<Void> response = roomController.deleteRoom(1L);
 
         // Assert: Verify 200 OK and no body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNull(response.getBody(), "Response body should be null");
         verify(roomService, times(1)).deleteRoom(1L);
     }
@@ -190,7 +190,7 @@ class RoomControllerTest {
         // Verify: Exception handler returns 404
         ResponseEntity<String> response = roomController.handleRuntimeException(
                 new RuntimeException("Room with ID 1 not found"));
-        assertEquals(404, response.getStatusCodeValue(), "Expected 404 status from exception handler");
+        assertEquals(404, response.getStatusCode().value(), "Expected 404 status from exception handler");
         assertEquals("Room with ID 1 not found", response.getBody(), "Expected correct error message");
         verify(roomService, times(1)).deleteRoom(1L);
     }
@@ -205,7 +205,7 @@ class RoomControllerTest {
         ResponseEntity<List<Room>> response = roomController.getAvailableRooms();
 
         // Assert: Verify 200 OK and response body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals(1, response.getBody().size(), "Expected one available room");
         assertEquals(1L, response.getBody().get(0).getId(), "Expected correct room ID");
@@ -217,24 +217,24 @@ class RoomControllerTest {
     @Test
     void setRate_ReturnsUpdatedRoom_WhenSuccessful() {
         // Arrange: Mock service to return updated room
-        when(roomService.setRate(eq(1L), eq(99.99))).thenReturn(room);
+        when(roomService.setRate(1L, 99.99)).thenReturn(room);
 
         // Act: Call controller method
         ResponseEntity<Room> response = roomController.setRate(1L, 99.99);
 
         // Assert: Verify 200 OK and response body
-        assertEquals(200, response.getStatusCodeValue(), "Expected 200 OK status");
+        assertEquals(200, response.getStatusCode().value(), "Expected 200 OK status");
         assertNotNull(response.getBody(), "Response body should not be null");
         assertEquals(1L, response.getBody().getId(), "Expected correct room ID");
         assertEquals(99.99, response.getBody().getRate(), "Expected correct room rate");
         assertEquals("Available", response.getBody().getStatus(), "Expected correct room status");
-        verify(roomService, times(1)).setRate(eq(1L), eq(99.99));
+        verify(roomService, times(1)).setRate(1L, 99.99);
     }
 
     @Test
     void setRate_Returns404_WhenNotFound() {
         // Arrange: Mock service to throw exception
-        when(roomService.setRate(eq(1L), eq(99.99)))
+        when(roomService.setRate(1L, 99.99))
                 .thenThrow(new RuntimeException("Room with ID 1 not found"));
 
         // Act & Assert: Verify exception is thrown and handled
@@ -246,8 +246,8 @@ class RoomControllerTest {
         // Verify: Exception handler returns 404
         ResponseEntity<String> response = roomController.handleRuntimeException(
                 new RuntimeException("Room with ID 1 not found"));
-        assertEquals(404, response.getStatusCodeValue(), "Expected 404 status from exception handler");
+        assertEquals(404, response.getStatusCode().value(), "Expected 404 status from exception handler");
         assertEquals("Room with ID 1 not found", response.getBody(), "Expected correct error message");
-        verify(roomService, times(1)).setRate(eq(1L), eq(99.99));
+        verify(roomService, times(1)).setRate(1L, 99.99);
     }
 }
