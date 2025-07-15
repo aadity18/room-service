@@ -7,5 +7,7 @@ WORKDIR /app
 # Copy the JAR file
 COPY target/room-service-1.0.jar room-service.jar
 
+EXPOSE 8081
+
 # Run the app
 ENTRYPOINT ["java", "-jar", "room-service.jar"]
